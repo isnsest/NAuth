@@ -1,6 +1,6 @@
-name: NAuth
+name: DAuth
 version: '1.0'
-main: org.isnsest.nAuth.NAuth
+main: org.isnsest.dauth.DAuth
 api-version: '1.21'
 author: isnsest
 commands:
@@ -9,7 +9,7 @@ commands:
     aliases:
       - changepass
     usage: /changepassword
-  nreload:
+  dreload:
     description: Reload config
-    permission: nauth.reload
-    usage: /nreload
+    permission: dauth.reload
+    usage: /dreload
