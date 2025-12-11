@@ -3,6 +3,7 @@ version: '1.0'
 main: org.isnsest.dauth.DAuth
 api-version: '1.21'
 author: isnsest
+folia-supported: true
 commands:
   changepassword:
     description: Change your password
