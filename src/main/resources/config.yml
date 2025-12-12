@@ -11,6 +11,7 @@ messages:
   button-register: "Register"
   button-change: "Change"
   button-quit: "Quit"
+  button-discord: "Discord"
 
   error-password-mismatch: "&cPasswords do not match."
   error-password-length: "&cPassword must be between %min% and %max% characters."
@@ -24,3 +25,6 @@ limits:
   min-password-length: 5
   max-password-length: 32
   timeout-seconds: 60
+
+links:
+  discord: "<link>"

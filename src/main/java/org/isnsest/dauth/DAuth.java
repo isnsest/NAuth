@@ -14,6 +14,7 @@ import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +38,8 @@ public final class DAuth extends JavaPlugin {
         saveDefaultConfig();
         database = new Database(this);
         Bukkit.getPluginManager().registerEvents(new EventListener(this), this);
+
+        Metrics metrics = new Metrics(this, 28317);
     }
 
     @Override
@@ -204,17 +208,29 @@ public final class DAuth extends JavaPlugin {
                     .canCloseWithEscape(canCloseWithEscape)
                     .build();
 
+            List<ActionButton> actionButtons = new ArrayList<>();
+            actionButtons.add(ActionButton.create(
+                    Component.text(buttonText),
+                    null,
+                    125,
+                    DialogAction.customClick(
+                            (view, audience) -> authPlayer(view, audience, uuid, mode),
+                            options
+                    )));
+            if (!plugin.getConfig().getString("links.discord", "<link>").equals("<link>")) {
+                try {
+                    URI url = new URI(plugin.getConfig().getString("links.discord", "<link>"));
+                    actionButtons.add(ActionButton.create(
+                            Component.text(mes("button-discord", "Discord")),
+                            null,
+                            65,
+                            DialogAction.staticAction(ClickEvent.openUrl(url.toURL()))));
+                } catch (Exception ignored) {
+                }
+            }
+
             return Dialog.create(builder -> builder.empty().base(base)
-                    .type(DialogType.multiAction(
-                            List.of(ActionButton.create(
-                                    Component.text(buttonText),
-                                    null,
-                                    125,
-                                    DialogAction.customClick(
-                                            (view, audience) -> authPlayer(view, audience, uuid, mode),
-                                            options
-                                    )
-                            ))
+                    .type(DialogType.multiAction(actionButtons
                     ).exitAction(
                             ActionButton.create(
                                     Component.text(mes("button-quit", "Quit")),
