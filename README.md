@@ -8,13 +8,6 @@
 
 **DAuth** is a modern and simple authentication plugin that completely relieves players from the need to type `/login` or `/register` commands in chat. All interaction takes place through convenient built-in game menus.
 
-### 🌟 How it works
-
-Instead of spawning the player in the world and freezing them, the plugin meets the user with an **on-screen menu** right at the connection stage.
-1.  **New player?** A registration window will open (enter password -> repeat password).
-2.  **Played before?** A login window will open (enter password).
-3.  **Result:** You enter the server only after successfully entering data.
-
 ### ⚡ Key Features
 
 *   **No commands:** Complete refusal of chat commands for login. Everything is done through beautiful native Minecraft windows.
@@ -24,7 +17,10 @@ Instead of spawning the player in the world and freezing them, the plugin meets 
     *   Login timer (default 60 seconds) — if the player is idle, they will be disconnected.
     *   Login ban if an account with such a nickname is already online.
 *   **Convenient password change:** A player can change their password right in the game through a menu where they need to specify the old and new password.
+*   **Support for 2FA:** Players can enable two-factor authentication via Google Authenticator. When 2FA is enabled, a code input window opens after entering the password.
+*   **Session timers:** After a player logs out, they can re-enter without retyping the password for a configurable period (default 5 minutes).
 *   **Configuration:** You can translate all labels, buttons, and window titles into any language, as well as limit the minimum and maximum password length.
+*   **Option to provide a link to your Discord server:** If a player forgets their password or needs help, they can access your Discord server directly from the menu.
 
 ---
 
@@ -34,6 +30,19 @@ Instead of spawning the player in the world and freezing them, the plugin meets 
 | :--- | :--- | :--- |
 | `/changepassword` | Players | Opens the menu to change the current password. |
 | `/dreload` | Admins | Reloads the plugin config and messages. |
+| `/logout` | Players | Logs out and kicks the player from the server. |
+| `/unregister` | Players/Admins | Deletes a player's account.|
+| `/2fa` | Players/Admins | Manage two-factor authentication (setup, remove). |
+
+---
+
+### 🔑 Permissions
+
+| Permission | Who needs it | Description |
+| :--- | :--- | :--- |
+| `dauth.admin` | Admins | General admin access for certain console commands. |
+| `dauth.admin.unregister` | Admins | Allows deleting accounts of other players via `/unregister <player>`. |
+| `dauth.admin.2fa` | Admins | Allows resetting 2FA for other players via `/2fa remove <player>`. |
 
 ---
 
@@ -45,3 +54,4 @@ Instead of spawning the player in the world and freezing them, the plugin meets 
     *   Time allowed for password entry.
     *   Password length (minimum/maximum).
     *   All text messages and button names.
+    *   Session duration and Discord link.
