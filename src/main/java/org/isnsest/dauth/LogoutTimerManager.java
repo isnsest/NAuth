@@ -1,15 +1,28 @@
 package org.isnsest.dauth;
 
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
 
 public class LogoutTimerManager {
 
-    public static List<String> ipList = new CopyOnWriteArrayList<>();
+    private static final Map<UUID, String> sessionMap = new ConcurrentHashMap<>();
 
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private static final ConcurrentHashMap<UUID, ScheduledFuture<?>> timers = new ConcurrentHashMap<>();
+
+    public static void updateSession(UUID playerId, String ip) {
+        sessionMap.put(playerId, ip);
+    }
+
+    public static boolean checkSession(UUID playerId, String ip) {
+        String storedIp = sessionMap.get(playerId);
+        return storedIp != null && storedIp.equals(ip);
+    }
+
+    public static void removeSession(UUID playerId) {
+        sessionMap.remove(playerId);
+    }
 
     public static void startTimer(UUID playerId, Runnable onExpire, long delaySeconds) {
         cancelTimer(playerId);
@@ -31,5 +44,4 @@ public class LogoutTimerManager {
             scheduled.cancel(false);
         }
     }
-
 }

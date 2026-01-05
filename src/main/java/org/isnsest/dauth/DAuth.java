@@ -48,7 +48,7 @@ public final class DAuth extends JavaPlugin {
             if (sender instanceof Player player) {
                 PlayerGameConnection connection = player.getConnection();
                 String ip = Arrays.stream(connection.getAddress().toString().split(":")).findFirst().orElse("null");
-                LogoutTimerManager.ipList.remove(ip);
+                LogoutTimerManager.removeSession(player.getUniqueId());
                 player.kick(Component.text(mes("logout", "Logout")));
             }
             return true;
@@ -170,7 +170,7 @@ public final class DAuth extends JavaPlugin {
 
             UUID id = connection.getProfile().getId();
             if (id == null) return;
-            if (LogoutTimerManager.ipList.contains(ip) && plugin.db().isRegistered(id)) {
+            if (LogoutTimerManager.checkSession(id, ip) && plugin.db().isRegistered(id)) {
                 LogoutTimerManager.cancelTimer(id);
                 return;
             }
@@ -195,7 +195,7 @@ public final class DAuth extends JavaPlugin {
                 case "Timeout" -> { connection.getAudience().closeDialog(); connection.disconnect(Component.text(plugin.mes("error-timeout", "Authentication timeout."))); }
                 case "Wrong password" -> { connection.getAudience().closeDialog(); connection.disconnect(Component.text(plugin.mes("error-wrong-password", "Wrong password."))); }
                 case "Exit" -> { connection.getAudience().closeDialog(); connection.disconnect(Component.text(plugin.mes("quit", "You have left the server."))); }
-                case "Done" -> { connection.getAudience().closeDialog(); LogoutTimerManager.ipList.add(ip); }
+                case "Done" -> { connection.getAudience().closeDialog(); LogoutTimerManager.updateSession(id, ip); }
                 default -> { connection.getAudience().closeDialog(); connection.disconnect(Component.text(plugin.mes("error-generic", res))); }
             }
         }
@@ -212,8 +212,8 @@ public final class DAuth extends JavaPlugin {
             UUID playerId = event.getPlayer().getUniqueId();
             PlayerGameConnection connection = event.getPlayer().getConnection();
             String ip = Arrays.stream(connection.getAddress().toString().split(":")).findFirst().orElse("null");
-            if (LogoutTimerManager.ipList.contains(ip)) {
-                LogoutTimerManager.startTimer(playerId, () -> LogoutTimerManager.ipList.remove(ip), plugin.getConfig().getInt("limits.session", 300));
+            if (LogoutTimerManager.checkSession(playerId, ip)) {
+                LogoutTimerManager.startTimer(playerId, () -> LogoutTimerManager.removeSession(playerId), plugin.getConfig().getInt("limits.session", 300));
             }
         }
 
