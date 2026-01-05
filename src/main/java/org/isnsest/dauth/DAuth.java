@@ -46,8 +46,6 @@ public final class DAuth extends JavaPlugin {
 
         getCommand("logout").setExecutor((sender, command, label, args) -> {
             if (sender instanceof Player player) {
-                PlayerGameConnection connection = player.getConnection();
-                String ip = Arrays.stream(connection.getAddress().toString().split(":")).findFirst().orElse("null");
                 LogoutTimerManager.removeSession(player.getUniqueId());
                 player.kick(Component.text(mes("logout", "Logout")));
             }
@@ -166,7 +164,7 @@ public final class DAuth extends JavaPlugin {
         @EventHandler
         public void onPlayerConfigure(AsyncPlayerConnectionConfigureEvent event) {
             PlayerConfigurationConnection connection = event.getConnection();
-            String ip = Arrays.stream(connection.getAddress().toString().split(":")).findFirst().orElse("null");
+            String ip = connection.getClientAddress().getAddress().getHostAddress();
 
             UUID id = connection.getProfile().getId();
             if (id == null) return;
@@ -211,7 +209,7 @@ public final class DAuth extends JavaPlugin {
         public void onPlayerQuit(PlayerQuitEvent event) {
             UUID playerId = event.getPlayer().getUniqueId();
             PlayerGameConnection connection = event.getPlayer().getConnection();
-            String ip = Arrays.stream(connection.getAddress().toString().split(":")).findFirst().orElse("null");
+            String ip = connection.getClientAddress().getAddress().getHostAddress();
             if (LogoutTimerManager.checkSession(playerId, ip)) {
                 LogoutTimerManager.startTimer(playerId, () -> LogoutTimerManager.removeSession(playerId), plugin.getConfig().getInt("limits.session", 300));
             }
